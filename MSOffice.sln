@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSOffice", "MSOffice.csproj", "{B29C4BBD-B2B2-419A-89F0-ABE4695F7CB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B29C4BBD-B2B2-419A-89F0-ABE4695F7CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B29C4BBD-B2B2-419A-89F0-ABE4695F7CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B29C4BBD-B2B2-419A-89F0-ABE4695F7CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B29C4BBD-B2B2-419A-89F0-ABE4695F7CB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF97E00C-DD74-49C1-9DCC-62BE3EEA6353}
+	EndGlobalSection
+EndGlobal
