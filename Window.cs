@@ -41,6 +41,8 @@ namespace MSOffice
 			}
 
 			pictureBox1.Invalidate();
+
+			MessageBox.Show("Изображение загружено!");
 		}
 
 		private void button4_Click(object sender, EventArgs e)
@@ -49,25 +51,17 @@ namespace MSOffice
 			if (openFileDialog1.ShowDialog() != DialogResult.OK)
 				return;
 
-			// Путь к документу
 			string pathDocument = openFileDialog1.FileName;
-
-			// Загрузка документа
 			DocX document = DocX.Load(pathDocument);
 
-			// загрузка изображения
 			Xceed.Document.NET.Image image = document.AddImage(pictureBox1.ImageLocation);
 
-			// Создание параграфа
 			Paragraph paragraph = document.InsertParagraph();
 
-			// Вставка изображения в параграф
 			paragraph.AppendPicture(image.CreatePicture());
 
-			// Выравнивание параграфа по центру
 			paragraph.Alignment = Alignment.center;
 
-			// Сохраняем документ
 			document.Save();
 
 			MessageBox.Show("Картинка добавлена в документ!");
@@ -85,6 +79,9 @@ namespace MSOffice
 			}
 
 			_lastOpenExcelFile = openFileDialog1.FileName;
+			dataGridView1.Rows.Clear();
+			dataGridView1.Columns.Clear();
+
 			try
 			{
 				Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
@@ -136,6 +133,8 @@ namespace MSOffice
 				Marshal.ReleaseComObject(excelWorkbook);
 				excelApp.Quit();
 				Marshal.ReleaseComObject(excelApp);
+
+				MessageBox.Show("Данные из документа Excel загружены!");
 			}
 			catch (Exception ex)
 			{
@@ -214,6 +213,125 @@ namespace MSOffice
 					e.Handled = true;
 				}
 			}
+		}
+
+		private void button7_Click(object sender, EventArgs e)
+		{
+			System.Data.DataTable dt = new System.Data.DataTable();
+
+			saveFileDialog1.Filter = "Файлы Excel|*.xlsx";
+			if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+			{
+				return;
+			}
+
+			_lastOpenExcelFile = saveFileDialog1.FileName;
+
+			try
+			{
+				Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
+				Microsoft.Office.Interop.Excel.Workbook excelWorkbook = excelApp.Workbooks.Add(Type.Missing);
+				Microsoft.Office.Interop.Excel._Worksheet excelWorksheet = excelWorkbook.Sheets[1];
+
+				for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
+				{
+					for (int j = 0; j < dataGridView1.Columns.Count; j++)
+					{
+						var value = dataGridView1.Rows[i].Cells[j].Value;
+						excelWorksheet.Cells[i + 1, j + 1]
+							= (value == null) ? "" : value.ToString();
+					}
+				}
+
+				excelWorkbook.SaveAs(_lastOpenExcelFile,
+					Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+					Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive,
+					Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
+				// Закрытие и очистка Excel процесса
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				Marshal.ReleaseComObject(excelWorksheet);
+				// Выход из Excel
+				excelWorkbook.Close();
+				Marshal.ReleaseComObject(excelWorkbook);
+				excelApp.Quit();
+				Marshal.ReleaseComObject(excelApp);
+
+				MessageBox.Show("Данные были загружены!");
+				_lastOpenExcelFile = "";
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+				_lastOpenExcelFile = "";
+			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			saveFileDialog1.Filter = "Файлы Word|*.docx";
+			if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+			{
+				return;
+			}
+
+			string pathDocument = saveFileDialog1.FileName;
+			DocX document = DocX.Create(pathDocument);
+
+			Table table = document.AddTable(dataGridView2.Rows.Count, dataGridView2.Columns.Count);
+			table.Alignment = Alignment.center;
+			table.Design = TableDesign.TableGrid;
+
+			for(int i = 0; i < dataGridView2.Rows.Count; i++)
+			{
+				for(int j = 0; j < dataGridView2.Rows[i].Cells.Count; j++)
+				{
+					var value = dataGridView2.Rows[i].Cells[j].Value;
+					table.Rows[i].Cells[j].Paragraphs[0].Append(
+						(value != null)? value.ToString() : ""
+						);
+				}
+			}
+
+			document.InsertParagraph().InsertTableAfterSelf(table);
+
+			document.Save();
+
+			MessageBox.Show("Таблица загружена в Word документ!");
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			openFileDialog1.Filter = "Файлы Word|*.docx";
+			if (openFileDialog1.ShowDialog() != DialogResult.OK)
+			{
+				return;
+			}
+
+			string pathDocument = openFileDialog1.FileName;
+			DocX document = DocX.Load(pathDocument);
+
+			Table table = document.AddTable(dataGridView2.Rows.Count, dataGridView2.Columns.Count);
+			table.Alignment = Alignment.center;
+			table.Design = TableDesign.TableGrid;
+
+			for (int i = 0; i < dataGridView2.Rows.Count; i++)
+			{
+				for (int j = 0; j < dataGridView2.Rows[i].Cells.Count; j++)
+				{
+					var value = dataGridView2.Rows[i].Cells[j].Value;
+					table.Rows[i].Cells[j].Paragraphs[0].Append(
+						(value != null) ? value.ToString() : ""
+						);
+				}
+			}
+
+			document.InsertParagraph().InsertTableAfterSelf(table);
+
+			document.Save();
+
+			MessageBox.Show("Таблица загружена в Word документ!");
 		}
 	}
 }
